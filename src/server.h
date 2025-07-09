@@ -3936,6 +3936,7 @@ void lpopCommand(client *c);
 void rpopCommand(client *c);
 void lmpopCommand(client *c);
 void llenCommand(client *c);
+void lcountCommand(client *c);
 void lindexCommand(client *c);
 void lrangeCommand(client *c);
 void ltrimCommand(client *c);

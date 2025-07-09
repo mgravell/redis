@@ -4673,6 +4673,27 @@ struct COMMAND_ARG LPOS_Args[] = {
 {MAKE_ARG("len",ARG_TYPE_INTEGER,-1,"MAXLEN",NULL,NULL,CMD_ARG_OPTIONAL,0,NULL)},
 };
 
+/* LCOUNT */
+
+#ifndef SKIP_CMD_HISTORY_TABLE
+#define LCOUNT_History NULL
+#endif
+
+#ifndef SKIP_CMD_TIPS_TABLE
+#define LCOUNT_Tips NULL
+#endif
+
+#ifndef SKIP_CMD_KEY_SPECS_TABLE
+keySpec LCOUNT_Keyspecs[1] = {
+{NULL,CMD_KEY_RO|CMD_KEY_ACCESS,KSPEC_BS_INDEX,.bs.index={1},KSPEC_FK_RANGE,.fk.range={0,1,0}}
+};
+#endif
+
+struct COMMAND_ARG LCOUNT_Args[] = {
+{MAKE_ARG("key",ARG_TYPE_KEY,0,NULL,NULL,NULL,CMD_ARG_NONE,0,NULL)},
+{MAKE_ARG("element",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE,0,NULL)},
+};
+
 /********** LPUSH ********************/
 
 #ifndef SKIP_CMD_HISTORY_TABLE
@@ -11359,6 +11380,7 @@ struct COMMAND_STRUCT redisCommandTable[] = {
 {MAKE_CMD("lmpop","Returns multiple elements from a list after removing them. Deletes the list if the last element was popped.","O(N+M) where N is the number of provided keys and M is the number of elements returned.","7.0.0",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LMPOP_History,0,LMPOP_Tips,0,lmpopCommand,-4,CMD_WRITE,ACL_CATEGORY_LIST,LMPOP_Keyspecs,1,lmpopGetKeys,4),.args=LMPOP_Args},
 {MAKE_CMD("lpop","Returns the first elements in a list after removing it. Deletes the list if the last element was popped.","O(N) where N is the number of elements returned","1.0.0",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LPOP_History,1,LPOP_Tips,0,lpopCommand,-2,CMD_WRITE|CMD_FAST,ACL_CATEGORY_LIST,LPOP_Keyspecs,1,NULL,2),.args=LPOP_Args},
 {MAKE_CMD("lpos","Returns the index of matching elements in a list.","O(N) where N is the number of elements in the list, for the average case. When searching for elements near the head or the tail of the list, or when the MAXLEN option is provided, the command may run in constant time.","6.0.6",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LPOS_History,0,LPOS_Tips,0,lposCommand,-3,CMD_READONLY,ACL_CATEGORY_LIST,LPOS_Keyspecs,1,NULL,5),.args=LPOS_Args},
+{MAKE_CMD("lcount","Returns the filtered length of a list.","O(N) where N is the number of elements in the list","9.0.0",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LCOUNT_History,0,LCOUNT_Tips,0,lcountCommand,3,CMD_READONLY|CMD_FAST,ACL_CATEGORY_LIST,LCOUNT_Keyspecs,1,NULL,1),.args=LCOUNT_Args},
 {MAKE_CMD("lpush","Prepends one or more elements to a list. Creates the key if it doesn't exist.","O(1) for each element added, so O(N) to add N elements when the command is called with multiple arguments.","1.0.0",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LPUSH_History,1,LPUSH_Tips,0,lpushCommand,-3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_LIST,LPUSH_Keyspecs,1,NULL,2),.args=LPUSH_Args},
 {MAKE_CMD("lpushx","Prepends one or more elements to a list only when the list exists.","O(1) for each element added, so O(N) to add N elements when the command is called with multiple arguments.","2.2.0",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LPUSHX_History,1,LPUSHX_Tips,0,lpushxCommand,-3,CMD_WRITE|CMD_DENYOOM|CMD_FAST,ACL_CATEGORY_LIST,LPUSHX_Keyspecs,1,NULL,2),.args=LPUSHX_Args},
 {MAKE_CMD("lrange","Returns a range of elements from a list.","O(S+N) where S is the distance of start offset from HEAD for small lists, from nearest end (HEAD or TAIL) for large lists; and N is the number of elements in the specified range.","1.0.0",CMD_DOC_NONE,NULL,NULL,"list",COMMAND_GROUP_LIST,LRANGE_History,0,LRANGE_Tips,0,lrangeCommand,4,CMD_READONLY,ACL_CATEGORY_LIST,LRANGE_Keyspecs,1,NULL,3),.args=LRANGE_Args},

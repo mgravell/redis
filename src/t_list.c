@@ -1055,6 +1055,38 @@ void lposCommand(client *c) {
     }
 }
 
+void lcountCommand(client *c) {
+    robj *ele;
+    ele = c->argv[2];
+
+    /* We return zero if there is no such key */
+    kvobj *o = lookupKeyRead(c->db,c->argv[1]);
+    if (o == NULL) {
+        addReply(c,shared.czero);
+        return;
+    }
+    if (checkType(c,o,OBJ_LIST)) return;
+
+    /* Seek the element. */
+    listTypeIterator *li;
+    li = listTypeInitIterator(o,LIST_HEAD,LIST_TAIL);
+    listTypeEntry entry;
+    long index = 0, matches = 0;
+    const size_t ele_len = sdslen(ele->ptr);
+    long long cached_longval = 0;
+    int cached_valid = 0;
+    while (listTypeNext(li,&entry)) {
+        if (listTypeEqual(&entry,ele,ele_len,&cached_longval,&cached_valid)) {
+            matches++;
+        }
+        index++;
+    }
+    listTypeReleaseIterator(li);
+
+    /* Reply to the client. */
+    addReplyLongLong(c,matches);
+}
+
 /* LREM <key> <count> <element> */
 void lremCommand(client *c) {
     robj *obj;
